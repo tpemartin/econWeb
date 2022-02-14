@@ -1,0 +1,73 @@
+
+
+# 
+
+```{r}
+rf <- econWeb::create_rfig()
+```
+
+```{r}
+rf$create_cssFile()
+```
+
+
+```{r}
+tagList(
+  rf$div$homes(
+    rf$div$`home-1`(),
+    rf$div$`home-2`(),
+    rf$div$`home-3`(),
+    rf$div$`home-4`()
+  ),
+  rf$style()
+) |> econWeb::browseTag()
+```
+
+```{r}
+file.edit("rfig.css")
+```
+
+
+## first way
+
+```{r}
+tagList(
+  rf$div$frame(
+    rf$div$circle(),
+    rf$div$rect()
+  ),
+  rf$style()
+) -> myUI
+myUI |> econWeb::browseTag()
+```
+
+## second way
+
+```{r}
+rf$create_cssFile()
+tagList(
+  rf$div$frame(
+    rf$div$circle(),
+    rf$div$rect()
+  ),
+  rf$includeCSS() 
+) -> myUI
+myUI |> econWeb::browseTag()
+```
+
+***
+
+You can also create css file with different filename.
+```{r}
+rf$create_cssFile("mystyle.css")
+tagList(
+  rf$div$frame(
+    rf$div$circle(),
+    rf$div$rect()
+  ),
+  rf$includeCSS() 
+) -> myUI
+myUI |> econWeb::browseTag()
+
+```
+

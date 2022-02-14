@@ -1,3 +1,42 @@
+#' Generate assets attachment href when dependency attachment is vector of folder names
+#'
+#' @param dependency a htmlDepency where src=c(file...)
+#'
+#' @return
+#' @export
+#'
+#' @examples none.
+generate_assets_attachment_href <- function(dependency) {
+  assets <- list()
+  assets_dep = dependency
+  # assets_dep$src$file
+  assets$source <- {
+    assets_dep$attachment |>
+      purrr::map(
+        ~{
+          list.files(
+            file.path(assets_dep$src, .x)
+          )
+        }
+      ) |>
+      setNames(assets_dep$attachment)
+
+  }
+
+  assets$folder = file.path(
+    "lib",
+    paste(assets_dep$name, assets_dep$version, sep="-"))
+  assets$href <- {
+    assets_dep$attachment |>
+      purrr::map(
+        ~file.path(assets$folder,.x, assets$source[[.x]])
+      ) |>
+      setNames(
+        assets_dep$attachment
+      )
+  }
+  assets
+}
 #' Create dependency other than script and link in the head
 #'
 #' @param name as in htmlDependency
@@ -53,15 +92,16 @@ browseTag <- function(tag=.Last.value){
 #' @export
 #'
 #' @examples none.
-translate_HTML_fromClipboard <- function(prefix = T) {
-  prefix=T
-  html2R(clipr::read_clip(), prefix = prefix) -> translatedTags
+translate_HTML_fromClipboard <- function(prefix = T, withStyle=F) {
+  # prefix=T
+
+  html2R(clipr::read_clip(), prefix = prefix, withStyle=withStyle) -> translatedTags
   translatedTags |>
     add_tick2someAttributes() |>
     remove_tagComment() |>
   clipr::write_clip()
 }
-html2R <- function(htmlStr, prefix = FALSE) {
+html2R <- function(htmlStr, prefix = FALSE, withStyle=FALSE) {
   message("adopted from https://github.com/alandipert/html2r")
   library(shiny)
   library(XML)
@@ -70,22 +110,46 @@ html2R <- function(htmlStr, prefix = FALSE) {
   library(stringr)
 
   htmlStr %>%
-    htmlParse %>%
+    htmlParse -> x
+
+  styleTag = NULL
+  if(withStyle){
+    generate_styleTag(x) -> styleTag
+  }
+
+  x %>%
     getNodeSet("/html/body/*") -> .temp
+
 
   .temp |>
     purrr::map(
       ~renderNode(.x, prefix = prefix)
     ) -> .temp2
 
-  .temp3 <- paste(unlist(.temp2), collapse = ",\n")
+  .temp2 = c(unlist(.temp2), styleTag)
 
-  paste0("tagList(\n", .temp3, "\n)")
+  .temp3 <- paste(.temp2, collapse = ",\n")
+  # browser()
+  if(length(.temp2)>1) .temp3 <- paste0("tagList(\n", .temp3, "\n)")
+
+  .temp4 <- glue::glue("{.temp3} -> tag_element\n\ntag_element |> econWeb::browseTag()")
+  return(.temp4)
 }
 
 
 # helpers -----------------------------------------------------------------
 
+generate_styleTag <- function(x) {
+  # get all style in header
+  x |> XML::getNodeSet("/html/head/style") ->    .style
+  purrr::map_chr(
+    .style,
+    XML::xmlValue
+  ) -> styleText
+  paste(styleText, collapse="\n\t") -> styleText
+  glue::glue("tags$style(\n\"{styleText}\"\n)") -> tag_style
+  return(tag_style)
+}
 
 makeAttrs <- function(node) {
   attrs <- xmlAttrs(node)

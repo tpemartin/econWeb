@@ -1,15 +1,20 @@
-Name: copied html translation for paste
+Name: translate clipboard html
 Description: New Addin Description
 Binding: translate_HTML_fromClipboard
-Interactive: false
-
-Name: Initiate bookdown builder
-Description: New Addin Description
-Binding: bookdownInGlobalEnv
 Interactive: false
 
 Name: Update package
 Description: New Addin Description
 Binding: update_package
+Interactive: false
+
+Name: translate figmaCSS to html
+Description: New Addin Description
+Binding: figma_Css2Html
+Interactive: false
+
+Name: Create rfig in globalEnv
+Description: New Addin Description
+Binding: create_rfig_globalEnv
 Interactive: false
 
