@@ -4,7 +4,10 @@
 \alias{create_rfig}
 \title{Convert figma CSS in clipboard to an R environment object}
 \usage{
-create_rfig()
+create_rfig(update_autolayout_margin = F)
+}
+\arguments{
+\item{update_autolayout_margin}{a logical, default=F. T means update inside auto layout margin to be half of its original value.}
 }
 \value{
 an environment with `create_cssFile`, `div` and `style` objects.

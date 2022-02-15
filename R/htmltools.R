@@ -84,6 +84,24 @@ browseTag <- function(tag=.Last.value){
   )
   browseURL("temp/.temp.html")
 }
+
+#' As browseURL but it browse a shiny.tag or html class object in RStudio Viewer
+#'
+#' @param tag A shiny.tag or html class object
+#'
+#' @return
+#' @export
+#'
+#' @examples none
+browseTag2 <- function(tag=.Last.value){
+  if(!dir.exists("temp")) dir.create("temp")
+  servr::daemon_stop()
+  htmltools::save_html(
+    tag, file="temp/.temp.html"
+  )
+  servr::httd("temp")
+  rstudioapi::viewer("http://127.0.0.1:4321/.temp.html")
+}
 #' Take copy from clipboard and translate html codes to R codes and write to clipboard for paste
 #'
 #' @param prefix a logical, default=T, the paste tag will start with tags$
