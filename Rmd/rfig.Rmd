@@ -3,8 +3,25 @@
 # 
 
 ```{r}
-rf <- econWeb::create_rfig()
+library(htmltools)
+rf <- econWeb::create_rfig(T)
 ```
+
+```{r}
+rf$div$toolbar(
+  rf$div$`btn-home`(),
+  rf$div$`btn-news`(),
+  rf$div$`btn-event`(),
+  rf$div$`btn-list`()
+) |> 
+  tagList(
+    rf$style()
+  ) |> 
+  econWeb::browseTag()
+```
+.btn-home {
+  background-image: url(/Users/martinl/Github/icons/docs/usr/.btn-home.svg);
+}
 
 ```{r}
 rf$create_cssFile()

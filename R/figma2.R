@@ -1,12 +1,13 @@
 #' Convert figma CSS in clipboard to an R environment object
 #'
+#' @param update_autolayout_margin a logical, default=F. T means update inside auto layout margin to be half of its original value.
 #' @return an environment with `create_cssFile`, `div` and `style` objects.
 #' @export
 #'
 #' @examples none
-create_rfig <- function(){
+create_rfig <- function(update_autolayout_margin=F){
   fig <- new.env()
-  figma_Css2Html2() -> list_tag_funs
+  figma_Css2Html2(update_autolayout_margin) -> list_tag_funs
   list_tag_funs$div |> purrr::map(
     eval
   ) -> fig$div
@@ -23,7 +24,7 @@ create_rfig <- function(){
   return(fig)
 }
 
-figma_Css2Html2 <- function(){
+figma_Css2Html2 <- function(update_autolayout_margin=F){
   css <- clipr::read_clip()
   css |>
     stringr::str_which("^/\\*\\s\\.") -> .x
@@ -32,14 +33,27 @@ figma_Css2Html2 <- function(){
     msg="There is no class name found. Maybe you forget to name your frame with starting . sign."
   )
 
+  css |> stringr::str_which("^/\\*") -> whichIsDivision
+  if(update_autolayout_margin){
+    css |> stringr::str_which(stringr::fixed("/* Inside auto layout */")) -> inside_autoLayout_starts
+    purrr::map(
+      inside_autoLayout_starts,
+      ~{
+        get_cssblock_positionIndices(c(whichIsDivision, length(css)+1), .x) -> locs
+        locs}
+    ) -> .temp
+
+    update_insideAutoLayout_margin(css, .temp) -> css
+  }
+
 
   css |> get_list_css(.x) -> list_css
   # list_css |> rename_duplicated_cssnames() -> list_css
-  if(isThereJustifyContent(list_css)){
-    list_css |> purrr::map(remove_autolayout_all_margin) -> list_css
-  } else {
-    list_css |> purrr::map(remove_autolayout_order0_margin) -> list_css
-  }
+  # if(isThereJustifyContent(list_css)){
+  #   list_css |> purrr::map(remove_autolayout_all_margin) -> list_css
+  # } else {
+  #   list_css |> purrr::map(remove_autolayout_order0_margin) -> list_css
+  # }
 
   unlist(list_css) |> paste(collapse="\n") -> css_content
   list_css |> unlist() |> paste(collapse="\n") -> css_string
@@ -149,4 +163,36 @@ rename_duplicated_cssnames <- function(names_css){
   }
   return(names_css)
 }
+get_cssblock <- function(css, pattern, whichIsDivision){
+  stringr::str_which(stringr::fixed(pattern)) -> start_autolayout
 
+  css[start_autolayout:end_autolayout]
+}
+isThereAutoLayout <- function(css){
+  any(stringr::str_detect(css, stringr::fixed("/* Auto layout */")))
+}
+get_cssblock_positionIndices <- function(whichIsDivision, start_autolayout) {
+  whichIsDivision |> subset(whichIsDivision> start_autolayout) |>
+    min() -> end_autolayout; end_autolayout -1 -> end_autolayout
+  return(start_autolayout:end_autolayout)
+}
+update_insideAutoLayout_margin <- function(css, .temp){
+  for(.x in seq_along(.temp)){
+    cssblock <- css[.temp[[.x]]]
+    cssblock |> stringr::str_which("^margin") -> .xx
+    .temp[[.x]][[.xx]] -> margin_loc
+    if(.x==1) margin_update = obtain_insideAutoLayout_marginUpdate(cssblock)
+    css[[margin_loc]] <- margin_update
+  }
+  return(css)
+}
+obtain_insideAutoLayout_marginUpdate <- function(cssblock){
+  cssblock |> stringr::str_subset("^margin") |>
+    stringr::str_extract_all("[\\.0-9]+") |> unlist() |>
+    as.numeric() -> margin
+  margin <- margin/2
+
+  paste0(margin,"px") |> paste(collapse=" ") -> margin_cssvalue
+  paste("margin:", margin_cssvalue) |> paste0(";") -> margin_css
+  margin_css
+}
