@@ -80,7 +80,7 @@ htmlDependency2 <- function(name, version,...){
 browseTag <- function(tag=.Last.value){
   if(!dir.exists("temp")) dir.create("temp")
   htmltools::save_html(
-    tag, file="temp/.temp.html"
+    tagList(tag, dep_mobile()), file="temp/.temp.html"
   )
   browseURL("temp/.temp.html")
 }
@@ -97,7 +97,7 @@ browseTag2 <- function(tag=.Last.value){
   if(!dir.exists("temp")) dir.create("temp")
   servr::daemon_stop()
   htmltools::save_html(
-    tag, file="temp/.temp.html"
+    tagList(tag, dep_mobile()), file="temp/.temp.html"
   )
   servr::httd("temp")
   rstudioapi::viewer("http://127.0.0.1:4321/.temp.html")
@@ -110,16 +110,24 @@ browseTag2 <- function(tag=.Last.value){
 #' @export
 #'
 #' @examples none.
-translate_HTML_fromClipboard <- function(prefix = T, withStyle=F) {
+translate_HTML_fromClipboard <- function(prefix = T, withStyle=F, styleTagCss=NULL) {
   # prefix=T
-
-  html2R(clipr::read_clip(), prefix = prefix, withStyle=withStyle) -> translatedTags
+  clipr::read_clip() -> html
+  html |> paste(collapse = "\n") -> html_string
+  stringr::str_extract_all(
+    html_string,
+    "(?<=\\<style\\>)((.|\\n)*)(?=\\</style\\>)"
+  ) -> css
+  if(css!=""){
+    styleTagCss= generate_styleTagFromCss(css)
+  }
+  html2R(html, prefix = prefix, withStyle=withStyle, styleTagCss=styleTagCss) -> translatedTags
   translatedTags |>
     add_tick2someAttributes() |>
-    remove_tagComment() |>
+    remove_tagComment()  |>
   clipr::write_clip()
 }
-html2R <- function(htmlStr, prefix = FALSE, withStyle=FALSE) {
+html2R <- function(htmlStr, prefix = FALSE, withStyle=FALSE, styleTagCss=NULL) {
   message("adopted from https://github.com/alandipert/html2r")
   library(shiny)
   library(XML)
@@ -144,19 +152,24 @@ html2R <- function(htmlStr, prefix = FALSE, withStyle=FALSE) {
       ~renderNode(.x, prefix = prefix)
     ) -> .temp2
 
-  .temp2 = c(unlist(.temp2), styleTag)
+  .temp2 = c(styleTagCss, unlist(.temp2), styleTag)
 
   .temp3 <- paste(.temp2, collapse = ",\n")
   # browser()
   if(length(.temp2)>1) .temp3 <- paste0("tagList(\n", .temp3, "\n)")
 
-  .temp4 <- glue::glue("{.temp3} -> tag_element\n\ntag_element |> econWeb::browseTag()")
+  .temp4 <- glue::glue("{.temp3} -> tag_element\n\ntag_element |> econWeb::browseTag2()")
   return(.temp4)
 }
 
 
 # helpers -----------------------------------------------------------------
-
+generate_styleTagFromCss <- function(css) {
+  unlist(css) |> paste0(collapse = "\n") -> css_string
+  paste0(
+    "tags$style('\n", css_string, "\n')"
+  ) -> style_tag
+}
 generate_styleTag <- function(x) {
   # get all style in header
   x |> XML::getNodeSet("/html/head/style") ->    .style
@@ -226,4 +239,13 @@ remove_tagComment <- function(translatedTags) {
   return(translatedTags)
 }
 
-
+dep_mobile <- function(){
+  htmltools::htmlDependency(
+    name="temp",
+    version="1.0.0",
+    src=c(file="assets/"),
+    meta=list(
+      viewport="width=device-width, initial-scale=1.0"
+    )
+  ) -> dep_mobile
+}

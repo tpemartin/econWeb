@@ -1,11 +1,6 @@
-Name: translate clipboard html
+Name: translate clipboard html to R
 Description: New Addin Description
 Binding: translate_HTML_fromClipboard
-Interactive: false
-
-Name: Update package
-Description: New Addin Description
-Binding: update_package
 Interactive: false
 
 Name: translate figmaCSS to html
@@ -18,3 +13,7 @@ Description: New Addin Description
 Binding: create_rfig_globalEnv
 Interactive: false
 
+Name: Update package
+Description: New Addin Description
+Binding: update_package
+Interactive: false

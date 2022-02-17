@@ -38,6 +38,17 @@ Figma <-  function(){
   return(figma)
 }
 
+#' Translate clipboard figma css to html
+#'
+#' @param update_autolayout_margin default =F
+#'
+#' @return
+#' @export
+#'
+#' @examples none
+figma_Css2Html <- function(update_autolayout_margin=F){
+  figma2html(update_autolayout_margin) |> clipr::write_clip()
+}
 
 # helpers -----------------------------------------------------------------
 create_webpageTag <- function(tag=NULL, destfolder=NULL, filename=NULL){
@@ -57,59 +68,4 @@ create_webpageTag <- function(tag=NULL, destfolder=NULL, filename=NULL){
 }
 
 
-figma_Css2Html <- function(){
-  css <- clipr::read_clip()
-  css |>
-    stringr::str_which("^/\\*\\s\\.") -> .x
-  assertthat::assert_that(
-    length(.x) >0,
-    msg="There is no class name found. Maybe you forget to name your frame with starting . sign."
-  )
-  css[.x] |>
-    stringr::str_remove_all("^/\\*\\s|\\s\\*/$") -> css_removed_comment
-  css_removed_comment |>
-    stringr::str_replace_all("^(?<=\\.)([:punct:]+|\\s)", "-") |>
-    stringr::str_remove_all("[<>\\=\\.]") -> cssnames0
-
-  pos = seq_along(css)
-  pos |> cut(c(.x-1,Inf)) -> groups
-  css |> split(groups) |>
-    setNames(cssnames0) -> split_css
-  purrr::map(
-    seq_along(cssnames0),
-    ~{
-      c(paste0(".",cssnames0[[.x]], " {"),
-        paste0("\t", split_css[[.x]]),
-        "}")
-    }
-  ) -> list_css
-
-  css_text = unlist(list_css)
-
-  elementclasses = cssnames0[-1]
-  frameclass = cssnames0[[1]]
-  purrr::map(
-    seq_along(elementclasses),
-    ~{
-
-      glue::glue("\t<div class=\"{elementclasses[[.x]]}\">el-{.x}</div>")
-    }
-  ) |> unlist() -> elementsHTML
-  html_text = c(
-    glue::glue("<div class=\"{frameclass}\">"),
-    paste0("\t", elementsHTML),
-    "</div>"
-  )
-  full_text =
-    c(
-      "<style>",
-      css_text,
-      "</style>",
-      html_text
-    )
-
-  full_text |> clipr::write_clip()
-
-  invisible(full_text)
-}
 

@@ -7,7 +7,7 @@
 #' @examples none
 create_rfig <- function(update_autolayout_margin=F){
   fig <- new.env()
-  figma_Css2Html2(update_autolayout_margin) -> list_tag_funs
+  figma2R(update_autolayout_margin) -> list_tag_funs
   list_tag_funs$div |> purrr::map(
     eval
   ) -> fig$div
@@ -23,8 +23,7 @@ create_rfig <- function(update_autolayout_margin=F){
   }
   return(fig)
 }
-
-figma_Css2Html2 <- function(update_autolayout_margin=F){
+figma2html <- function(update_autolayout_margin=F){
   css <- clipr::read_clip()
   css |>
     stringr::str_which("^/\\*\\s\\.") -> .x
@@ -33,6 +32,42 @@ figma_Css2Html2 <- function(update_autolayout_margin=F){
     msg="There is no class name found. Maybe you forget to name your frame with starting . sign."
   )
 
+  css |> create_cssList(update_autolayout_margin, .x) -> list_css
+
+  purrr::map(names(list_css), ~glue::glue("<div class='{.x}'>\n</div>")) -> list_div
+
+  paste("<style>",
+    convert_listCss2stringCss(list_css),
+    "</style>", sep="\n") -> style_tag
+  c(style_tag,
+    unlist(list_div))
+}
+figma2R <- function(update_autolayout_margin=F){
+  css <- clipr::read_clip()
+  css |>
+    stringr::str_which("^/\\*\\s\\.") -> .x
+  assertthat::assert_that(
+    length(.x) >0,
+    msg="There is no class name found. Maybe you forget to name your frame with starting . sign."
+  )
+
+  css |>
+    create_cssList(update_autolayout_margin, .x) -> list_css
+  list_css |>
+    convert_listCss2stringCss() -> css_string
+  expr_tagStyle <- rlang::expr({
+    function(){
+      tags$style(!!css_string)
+    }})
+  generate_div_funExpr_list(names(list_css)) -> list_expr_tagDiv
+
+  list(
+    style=expr_tagStyle,
+    div=list_expr_tagDiv,
+    css=css_string
+  )
+}
+create_cssList <- function(css, update_autolayout_margin, .x){
   css |> stringr::str_which("^/\\*") -> whichIsDivision
   if(update_autolayout_margin){
     css |> stringr::str_which(stringr::fixed("/* Inside auto layout */")) -> inside_autoLayout_starts
@@ -55,19 +90,12 @@ figma_Css2Html2 <- function(update_autolayout_margin=F){
   #   list_css |> purrr::map(remove_autolayout_order0_margin) -> list_css
   # }
 
-  unlist(list_css) |> paste(collapse="\n") -> css_content
+  return(list_css)
+}
+convert_listCss2stringCss <- function(list_css){
+  # unlist(list_css) |> paste(collapse="\n") -> css_content
   list_css |> unlist() |> paste(collapse="\n") -> css_string
-  expr_tagStyle <- rlang::expr({
-    function(){
-      tags$style(!!css_string)
-    }})
-  generate_div_funExpr_list(names(list_css)) -> list_expr_tagDiv
-
-  list(
-    style=expr_tagStyle,
-    div=list_expr_tagDiv,
-    css=css_content
-  )
+  return(css_string)
 }
 # div_list = generate_div_funExpr_list(c("aaa","bbb"))
 
