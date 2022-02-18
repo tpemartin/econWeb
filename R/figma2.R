@@ -77,7 +77,7 @@ figma2R <- function(update_autolayout_margin=F){
     function(){
       tags$style(!!css_string)
     }})
-  generate_div_funExpr_list(cssnames) -> list_expr_tagDiv
+  generate_div_funExpr_list(cssnames, list_css) -> list_expr_tagDiv
 
   list(
     style=expr_tagStyle,
@@ -118,19 +118,24 @@ convert_listCss2stringCss <- function(list_css){
 }
 # div_list = generate_div_funExpr_list(c("aaa","bbb"))
 
-generate_div_funExpr_list <- function(cssnames){
+generate_div_funExpr_list <- function(cssnames, list_css){
   purrr::map(
     cssnames,
-    ~generate_div_funExpr(.x)
+    ~generate_div_funExpr(.x, list_css[[.x]])
   ) |> setNames(cssnames)
 }
-generate_div_funExpr <- function(cssname){
+generate_div_funExpr <- function(cssname, css_string){
+  css <- paste0(css_string, collapse = "\n")
   rlang::expr({function(..., class=NULL){
     tags$div(
       class=!!cssname,...
     ) -> tagX
     if(!is.null(class)) htmltools::tagAppendAttributes(tagX, class=class) -> tagX
-    return(tagX)
+    tagList(
+      tagX,
+      tags$style(!!css)
+    ) -> tagX2
+    return(tagX2)
   }})
 }
 generate_img_funExpr_list <- function(imgnames){
