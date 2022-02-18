@@ -46,7 +46,7 @@ Figma <-  function(){
 #' @export
 #'
 #' @examples none
-figma_Css2Html <- function(update_autolayout_margin=F){
+figma_Css2Html <- function(update_autolayout_margin=T){
   figma2html(update_autolayout_margin) |> clipr::write_clip()
 }
 

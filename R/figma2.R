@@ -11,6 +11,9 @@ create_rfig <- function(update_autolayout_margin=F){
   list_tag_funs$div |> purrr::map(
     eval
   ) -> fig$div
+  if(!is.null(list_tag_funs$img)){
+    list_tag_funs$img -> fig$img
+  }
 
   eval(list_tag_funs$style) -> fig$style
   list_tag_funs$css -> cssRules
@@ -33,8 +36,11 @@ figma2html <- function(update_autolayout_margin=F){
   )
 
   css |> create_cssList(update_autolayout_margin, .x) -> list_css
+  purrr::map(list_css, fix_background)-> list_css
+
 
   purrr::map(names(list_css), ~glue::glue("<div class='{.x}'>\n</div>")) -> list_div
+
 
   paste("<style>",
     convert_listCss2stringCss(list_css),
@@ -45,25 +51,38 @@ figma2html <- function(update_autolayout_margin=F){
 figma2R <- function(update_autolayout_margin=F){
   css <- clipr::read_clip()
   css |>
-    stringr::str_which("^/\\*\\s\\.") -> .x
+    stringr::str_which("^/\\*\\s(\\.|img)") -> .x
   assertthat::assert_that(
     length(.x) >0,
     msg="There is no class name found. Maybe you forget to name your frame with starting . sign."
   )
+  css[.x] |> stringr::str_which("(?<=^/\\*\\s)img") -> img_tag_loc
+  #css[.x[img_tag_loc]]
 
   css |>
     create_cssList(update_autolayout_margin, .x) -> list_css
+  cssnames = names(list_css)
+
+  list_expr_tagImg=NULL
+  if(length(img_tag_loc)!=0){
+    list_css=list_css[-img_tag_loc]
+    imgnames=cssnames[img_tag_loc]
+    cssnames=cssnames[-img_tag_loc]
+    generate_img_funExpr_list(imgnames)-> list_tagImg
+  }
+
   list_css |>
     convert_listCss2stringCss() -> css_string
   expr_tagStyle <- rlang::expr({
     function(){
       tags$style(!!css_string)
     }})
-  generate_div_funExpr_list(names(list_css)) -> list_expr_tagDiv
+  generate_div_funExpr_list(cssnames) -> list_expr_tagDiv
 
   list(
     style=expr_tagStyle,
     div=list_expr_tagDiv,
+    img=list_tagImg,
     css=css_string
   )
 }
@@ -114,6 +133,17 @@ generate_div_funExpr <- function(cssname){
     return(tagX)
   }})
 }
+generate_img_funExpr_list <- function(imgnames){
+  purrr::map(
+    imgnames,
+    ~generate_img_funExpr(.x)
+  ) |> setNames(imgnames)
+}
+generate_img_funExpr <- function(imgname){
+  function(..., src=paste0(imgname, ".png")){
+      tags$img(src=src, ...)
+    }
+}
 get_cssnames <- function(cssX){
   cssX |>
     stringr::str_remove_all("^/\\*\\s|\\s\\*/$") -> css_removed_comment
@@ -146,7 +176,7 @@ get_list_css <- function(css, .x){
     seq_along(cssnames0),
     ~{
       c(paste0(".",cssnames0[[.x]], " {"),
-        paste0("\t", split_css[[.x]]),
+        paste0("  ", split_css[[.x]]),
         "}")
     }
   ) |>
@@ -223,4 +253,16 @@ obtain_insideAutoLayout_marginUpdate <- function(cssblock){
   paste0(margin,"px") |> paste(collapse=" ") -> margin_cssvalue
   paste("margin:", margin_cssvalue) |> paste0(";") -> margin_css
   margin_css
+}
+fix_background <- function(cssx){
+  cssx |> stringr::str_which("background: url") -> backgroundUrlLine
+  if(length(backgroundUrlLine)!=0){
+    cssx[1:backgroundUrlLine] |>
+      c(
+        "  background-repeat: no-repeat;",
+        "  background-size: cover;",
+        cssx[(backgroundUrlLine+1):length(cssx)]
+      ) -> cssx
+  }
+  return(cssx)
 }
