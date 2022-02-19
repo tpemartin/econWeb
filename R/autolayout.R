@@ -17,11 +17,22 @@ updateCSS_autoLayout <- function(list_css, loc_autolayout) {
   css_AL |>
     get_flexDirection() -> flex_direction
 
+  classname_AL = names(list_css)[[loc_autolayout]]
 
+  list_css |>
+    names() |>
+    stringr::str_which(
+      paste0(classname_AL,"-[^\\-]*$")
+    ) -> whichIsItem
+  list_css_nested = list_css[whichIsItem]
+
+  list_css_nested |>
+    update_autolayoutItemMargins() ->
+    list_css_nested
   flag_insideAL = T
   iter=0
-  max_iter=length(list_css)-loc_autolayout
-  cssX=list_css[[loc_autolayout+iter+1]]
+  max_iter=length(list_css_nested)
+  cssX=list_css_nested[[1]]
   while(flag_insideAL && iter < max_iter){
 
     cssX |>
@@ -36,19 +47,21 @@ updateCSS_autoLayout <- function(list_css, loc_autolayout) {
       cssX |> update_cssX_forAlignSelf(flex_direction) -> cssX
     }
 
-    cssX -> list_css[[loc_autolayout+iter+1]]
+    cssX -> list_css_nested[[iter+1]]
 
     iter=iter+1
-    if(loc_autolayout+iter+1 > length(list_css)){
+    if(iter+1 > length(list_css_nested)){
       flag_insideAL = F
 
     } else {
-      list_css[[loc_autolayout+iter+1]] -> cssX
+      list_css_nested[[iter+1]] -> cssX
       cssX |>
         stringr::str_detect("/\\* Inside auto layout \\*/") |> any() -> flag_insideAL
     }
 
   }
+  list_css_nested -> list_css[whichIsItem]
+
   return(list_css)
 }
 get_cssValueByKey <- function(css, key){
@@ -75,15 +88,20 @@ update_cssX_forFlexGrow <- function(cssX, flex_direction){
     "column"={
       cssX |>
         get_styleLocation("height") -> whichIsHeight
+      if(length(whichIsHeight)!=0){
       cssX[[whichIsHeight]] <- NA
       cssX |> na.omit() -> cssX
+      }
       cssX
     },
     "row"={
       cssX |>
         get_styleLocation("width") -> whichIsWidth
-      cssX[[whichIsWidth]] <- NA
-      cssX |> na.omit() -> cssX
+      if(length(whichIsWidth)!=0){
+        cssX[[whichIsWidth]] <- NA
+        cssX |> na.omit() -> cssX
+      }
+
       cssX
     }
   )
@@ -107,3 +125,38 @@ update_cssX_forAlignSelf <- function(cssX, flex_direction){
     }
   )
 }
+update_autolayoutItemMargins <- function(list_css_nested) {
+  for(.x in seq_along(list_css_nested)){
+    list_css_nested[[.x]]-> cssX
+    if(.x==1){
+      cssX |>
+        get_cssValueByKey("margin") -> oldMargins
+    }
+    oldMargins |>
+      obtain_newMargins(length(list_css_nested))-> newMargins
+
+    cssX |> update_cssXmargins(newMargins) ->
+      list_css_nested[[.x]]
+  }
+  return(list_css_nested)
+}
+
+
+obtain_newMargins <- function(oldMargin, len) {
+  stringr::str_extract_all(unlist(oldMargin),"[0-9]+") |> unlist() |> as.numeric() -> margins
+  margins/len -> newMargins
+  paste0(newMargins, "px", collapse=" ") -> newMargins
+  newMargins
+}
+update_cssXmargins <- function(cssX, newMargins){
+  stringr::str_which(cssX,
+    "\\bmargin\\b:") -> whichIsKey
+  if(length(whichIsKey)!=0){
+    cssX[whichIsKey] |>
+      stringr::str_replace(
+        "(?<=margin:\\s)[^;]+", newMargins
+      ) -> cssX[whichIsKey]
+  }
+  return(cssX)
+}
+

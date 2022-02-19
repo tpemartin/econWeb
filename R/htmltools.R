@@ -97,10 +97,11 @@ browseTag2 <- function(tag=.Last.value){
   if(!dir.exists("temp")) dir.create("temp")
   servr::daemon_stop()
   htmltools::save_html(
-    tagList(tag, dep_mobile()), file="temp/.temp.html"
+    tagList(tag, dep_mobile()), file="temp/temp.html"
   )
-  servr::httd("temp")
-  rstudioapi::viewer("http://127.0.0.1:4321/.temp.html")
+  ss <- servr::httd("temp")
+  # ss$port
+  rstudioapi::viewer(glue::glue("http://127.0.0.1:{ss$port}/temp.html"))
 }
 #' Take copy from clipboard and translate html codes to R codes and write to clipboard for paste
 #'

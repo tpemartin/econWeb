@@ -29,7 +29,7 @@ create_rfig <- function(update_autolayout_margin=F){
 figma2html <- function(update_autolayout_margin=F){
   css <- clipr::read_clip()
   css |>
-    stringr::str_which("^/\\*\\s\\.") -> .x
+    stringr::str_which("^/\\*\\s(\\.|img)") -> .x
   assertthat::assert_that(
     length(.x) >0,
     msg="There is no class name found. Maybe you forget to name your frame with starting . sign."
@@ -68,6 +68,8 @@ figma2R <- function(update_autolayout_margin=F){
     fix_autolayout_itemWidthHeight() -> list_css
   cssnames = names(list_css)
 
+  purrr::map(list_css, fix_background)-> list_css
+
   list_tagImg=NULL
   if(length(img_tag_loc)!=0){
     list_css=list_css[-img_tag_loc]
@@ -93,17 +95,17 @@ figma2R <- function(update_autolayout_margin=F){
 }
 create_cssList <- function(css, update_autolayout_margin, .x){
   css |> stringr::str_which("^/\\*") -> whichIsDivision
-  if(update_autolayout_margin){
-    css |> stringr::str_which(stringr::fixed("/* Inside auto layout */")) -> inside_autoLayout_starts
-    purrr::map(
-      inside_autoLayout_starts,
-      ~{
-        get_cssblock_positionIndices(c(whichIsDivision, length(css)+1), .x) -> locs
-        locs}
-    ) -> .temp
-
-    update_insideAutoLayout_margin(css, .temp) -> css
-  }
+  # if(update_autolayout_margin){
+  #   css |> stringr::str_which(stringr::fixed("/* Inside auto layout */")) -> inside_autoLayout_starts
+  #   purrr::map(
+  #     inside_autoLayout_starts,
+  #     ~{
+  #       get_cssblock_positionIndices(c(whichIsDivision, length(css)+1), .x) -> locs
+  #       locs}
+  #   ) -> .temp
+  #
+  #   update_insideAutoLayout_margin(css, .temp) -> css
+  # }
 
 
   css |> get_list_css(.x) -> list_css
