@@ -37,6 +37,8 @@ figma2html <- function(update_autolayout_margin=F){
 
   css |> create_cssList(update_autolayout_margin, .x) -> list_css
   list_css |>
+    resolve_flexPositionConflict() -> list_css
+  list_css |>
     fix_autolayout_itemWidthHeight() -> list_css
 
   purrr::map(list_css, fix_background)-> list_css
@@ -64,6 +66,8 @@ figma2R <- function(update_autolayout_margin=F){
 
   css |>
     create_cssList(update_autolayout_margin, .x) -> list_css
+  list_css |>
+    resolve_flexPositionConflict() -> list_css
   list_css |>
     fix_autolayout_itemWidthHeight() -> list_css
   cssnames = names(list_css)

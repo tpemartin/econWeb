@@ -159,4 +159,47 @@ update_cssXmargins <- function(cssX, newMargins){
   }
   return(cssX)
 }
+resolve_flexConflict <- function(list_css){
+  for(.x in seq_along(list_css)){
+    list_css[[.x]] |> resolve_flexConflict_cssX() -> list_css[[.x]]
+  }
+  return(list_css)
+}
 
+resolve_flexConflict_cssX <- function(cssX){
+  # list_css$`cardContent-teacher-word` -> cssX
+
+  if(any(stringr::str_detect(cssX, "display: flex;"))){
+    stringr::str_which(cssX, "flex: none;") -> whichIsConflict
+    if(length(whichIsConflict)!=0){
+      cssX[whichIsConflict] <-
+        paste0("/**", cssX[whichIsConflict],"**/")
+    }
+
+  }
+  cssX
+
+}
+resolve_flexPositionConflict <- function(list_css){
+  for(.x in 2:length(list_css)){
+    # print(.x)
+    # if(.x==13) browser()
+    list_css[[.x]] |> resolve_flexConflict_cssX() -> list_css[[.x]]
+    list_css[[.x]] |> resolve_flexPositionAbsolute_cssX() ->
+      list_css[[.x]]
+  }
+  return(list_css)
+}
+resolve_flexPositionAbsolute_cssX <- function(cssX){
+  flag_detectFont <- any(stringr::str_detect(cssX, "font.+:"))
+  flag_detectLRTB <- any(stringr::str_detect(cssX, "(left|right|top|bottom): .+px"))
+  flag_detectAbsolute <- any(stringr::str_detect(cssX, "position: absolute"))
+  if((flag_detectFont || flag_detectLRTB) && flag_detectAbsolute){
+    whichIsAbolute <- stringr::str_which(cssX, "position: absolute")
+    cssX[whichIsAbolute] <-
+      paste0("/**", cssX[whichIsAbolute],"**/")
+  }
+  return(cssX)
+
+
+}
