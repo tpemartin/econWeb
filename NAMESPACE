@@ -2,6 +2,7 @@
 
 export(Bookdown)
 export(Figma)
+export(Object)
 export(Query)
 export(Web)
 export(browseTag)

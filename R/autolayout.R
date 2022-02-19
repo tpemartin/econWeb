@@ -8,7 +8,16 @@ fix_autolayout_itemWidthHeight <- function(list_css){
   whichIsAutoLayout <- which(pick_autoLayout)
 
   for(.x in whichIsAutoLayout){
-    list_css <- updateCSS_autoLayout(list_css, .x)
+    # if(.x %in% c(1, 12, 22)) browser()
+    tryCatch(
+      {updateCSS_autoLayout(list_css, .x)
+      },
+      error=function(e){
+        warning(.x)
+        list_css
+      }
+    ) -> list_css
+    # list_css <- updateCSS_autoLayout(list_css, .x)
   }
   list_css
 }
@@ -24,6 +33,11 @@ updateCSS_autoLayout <- function(list_css, loc_autolayout) {
     stringr::str_which(
       paste0(classname_AL,"-[^\\-]*$")
     ) -> whichIsItem
+
+  assertthat::assert_that(
+    length(whichIsItem)!=0,
+    msg=glue::glue("{classname_AL}'s does not have any autolay out items.")
+  )
   list_css_nested = list_css[whichIsItem]
 
   list_css_nested |>
@@ -182,7 +196,7 @@ resolve_flexConflict_cssX <- function(cssX){
 }
 resolve_flexPositionConflict <- function(list_css){
   for(.x in 2:length(list_css)){
-    # print(.x)
+    print(.x)
     # if(.x==13) browser()
     list_css[[.x]] |> resolve_flexConflict_cssX() -> list_css[[.x]]
     list_css[[.x]] |> resolve_flexPositionAbsolute_cssX() ->

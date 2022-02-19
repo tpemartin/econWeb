@@ -4,7 +4,7 @@
 \alias{translate_HTML_fromClipboard}
 \title{Take copy from clipboard and translate html codes to R codes and write to clipboard for paste}
 \usage{
-translate_HTML_fromClipboard(prefix = T, withStyle = F)
+translate_HTML_fromClipboard(prefix = T, withStyle = F, styleTagCss = NULL)
 }
 \arguments{
 \item{prefix}{a logical, default=T, the paste tag will start with tags$}

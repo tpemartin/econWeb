@@ -4,7 +4,7 @@
 \alias{figma_Css2Html}
 \title{Translate clipboard figma css to html}
 \usage{
-figma_Css2Html(update_autolayout_margin = F)
+figma_Css2Html(update_autolayout_margin = T)
 }
 \arguments{
 \item{update_autolayout_margin}{default =F}
