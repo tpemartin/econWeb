@@ -8,11 +8,6 @@ Description: New Addin Description
 Binding: figma_Css2Html
 Interactive: false
 
-Name: Create rfig in globalEnv
-Description: New Addin Description
-Binding: create_rfig_globalEnv
-Interactive: false
-
 Name: Update package
 Description: New Addin Description
 Binding: update_package

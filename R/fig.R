@@ -1,5 +1,11 @@
+#' Initiator for fig
+#'
+#' @return
+#' @export
+#'
+#' @examples none
 Fig <- function() {
-  fig <- new.env()
+  fig <- structure(new.env(), class="fig")
   fig$css <- list(
     original=clipr::read_clip()
   )
@@ -82,6 +88,7 @@ Fig <- function() {
     ) -> fig$div_input
 
     function(){
+      require(htmltools)
       tag_style =
         tags$style(
           fig$csstext
@@ -100,8 +107,13 @@ Fig <- function() {
       ~get_divInputFunction(.x, fig$div)
     ) -> fig$div_input
     fig$ui <- function(){
+      require(htmltools)
       do.call(fig$div[[1]], fig$div_input[[1]]())
     }
+  }
+
+  fig$export <- function(tagname="fig"){
+    fig |> export_fig(tagname=tagname)
   }
   return(fig)
 }

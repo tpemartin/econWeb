@@ -17,7 +17,7 @@ export_fig <- function(fig, tagname="mycard") {
       name=\"<<tagname>>\",
       version=\"1.0.0\",
       src=c(file=normalizePath(\".\")),
-      style=cssfilename,
+      style=\"<<cssfilename>>\",
       all_files = F
     )}", .open="<<", .close=">>") -> dep_text
   dep_text |> clipr::write_clip()
@@ -30,6 +30,12 @@ export_fig <- function(fig, tagname="mycard") {
     paste(collapse = "\n") |> clipr::write_clip()
 }
 generate_tagUiText <- function(htmlStr){
+  library(shiny)
+  library(XML)
+  library(magrittr)
+  library(purrr)
+  library(stringr)
+
   htmlStr %>%
     htmlParse(encoding="UTF-8") -> x
   x %>%

@@ -182,6 +182,7 @@ rename_split_css <- function(split_css) {
   tb_cssnames |>
     subset(tb_cssnames!=1) ->
     tbDup_cssnames
+  if(length(tbDup_cssnames)==0) return(split_css)
   dupIndices = c()
   for(.x in seq_along(tbDup_cssnames)){
     tbDup_cssnames[.x] |>names() -> namex

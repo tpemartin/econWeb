@@ -58,7 +58,7 @@ fig$ui() |> browseTag2()
 
 Export with a tagname:
 ```{r}
-fig |> export_fig(tagname="mytag")
+fig$export(tagname="card")
 ```
 
   * The R code is stored in your clipboard for paste now, which looks like:
