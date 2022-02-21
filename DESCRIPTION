@@ -21,3 +21,7 @@ Imports:
     xfun,
     XML
 Depends: R (>= 4.1.0)
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr

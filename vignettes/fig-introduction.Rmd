@@ -1,0 +1,60 @@
+---
+title: "fig-introduction"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{fig-introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(econWeb)
+```
+
+## Step 1
+
+Select the UI frame to export then right click to choose **Copy/Paste as** > **Copy as CSS**
+
+## Step 2
+
+In R
+```{r}
+fig <- Fig()
+```
+
+## Step 3
+
+View fundamental UI
+```{r}
+fig$ui() |> browseTag2()
+```
+
+## Step 4 
+
+Adjust frame inner text/html
+
+```{r}
+fig$div |> names()
+```
+
+```{r}
+fig$ui() -> tag_ui
+tagQ <- tagQuery(tag_ui)
+tagQ$find(".card-content-teacher-word")$append("前往VoiceTube 聽 Leila 老師如何應用單字")
+tagQ$find(".card-content-btn-level")$append("A2 level")
+tagQ$find(".card-content-word-explain")$append("adj. 虛弱的；欺詐的
+n. 戲法；竅門；訣竅；把戲；特技")
+tagQ$find(".card-content-word-pronun")$append("US /trɪk/       US /trɪk/")
+tagQ$find(".card-content-word-title")$append("TRICK")
+tagQ$selectedTags() |>
+  browseTag2()
+
+```
+
