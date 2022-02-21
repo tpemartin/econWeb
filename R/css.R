@@ -61,11 +61,14 @@ split_css_by <- function(cssX, pattern="/\\* Auto layout \\*/"){
       cssX[-c(whichIsAutoLayout:whichEnds)]
   )
 }
-split_css2div <- function(split_css){
+split_css2div <- function(split_css,split_innerText=NULL){
+  innerTextx = NULL
   seq_along(split_css) |>
     purrr::map(
       ~{
-        get_div_split_css(split_css[.x])
+        if(!is.null(split_innerText)) innerTextx=split_innerText[[.x]]
+        get_div_split(split_css[.x], innerTextx)
+        # get_div_split_css(split_css[.x], innerTextx)
       }
     ) |>
     setNames(names(split_css))
@@ -82,19 +85,26 @@ map_parent_child <- function(split_css){
     cssnameX <- cssnames[[.x]]
     # cssnameX
     stringr::str_which(
-      cssnames[seq_cssnames2check], paste0(cssnameX,"\\-[^\\-]+$")
+      cssnames,#[seq_cssnames2check],
+      paste0(cssnameX,"\\-[^\\-]+$")
     ) -> whichBelong2X
-    if(length(whichBelong2X)==0) next
-    css_belong[seq_cssnames2check[whichBelong2X]] = .x
-    map_pc[[.x]] = seq_cssnames2check[whichBelong2X]
-    seq_cssnames2check |> setdiff(whichBelong2X) -> seq_cssnames2check
-    if(length(seq_cssnames2check)==0) break
+    css_belong[whichBelong2X] = .x
+    map_pc[[.x]]=whichBelong2X
+    # if(length(whichBelong2X)==0) next
+    # css_belong[seq_cssnames2check[whichBelong2X]] = .x
+    # map_pc[[.x]] =  seq_cssnames2check[whichBelong2X]
+    # seq_cssnames2check |> setdiff(whichBelong2X) -> seq_cssnames2check
+    # if(length(seq_cssnames2check)==0) break
   }
   names(map_pc) <- names(split_css)
   return(map_pc)
 }
 correctMargin_targetAL_childX <- function(children_css, targetAL_children) {
   numberOfChildren <- length(targetAL_children)
+  if(numberOfChildren==1){
+    children_css[[1]]$inside_autoLayout$margin <- NULL
+    return(children_css)
+  }
   for(.x in seq_along(targetAL_children)){
     children_css[[.x]]$inside_autoLayout$margin |>
       stringr::str_extract_all(
@@ -164,5 +174,27 @@ correct_insideAutoLayoutConstraint <- function(split_css, pc_map) {
     }
 
   }
+  return(split_css)
+}
+rename_split_css <- function(split_css) {
+  cssnames <- names(split_css)
+  tb_cssnames <- table(cssnames)
+  tb_cssnames |>
+    subset(tb_cssnames!=1) ->
+    tbDup_cssnames
+  dupIndices = c()
+  for(.x in seq_along(tbDup_cssnames)){
+    tbDup_cssnames[.x] |>names() -> namex
+    whichIsDup <- which(
+      cssnames==namex
+    )
+    paste(
+      namex, c("", 1:(tbDup_cssnames[[.x]]-1)), sep="") ->
+      names(split_css)[whichIsDup]
+
+    dupIndices=c(dupIndices, whichIsDup)
+  }
+  split_css =
+    append(split_css[-dupIndices], split_css[dupIndices])
   return(split_css)
 }

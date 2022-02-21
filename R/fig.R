@@ -27,6 +27,9 @@ Fig <- function() {
   list_css |>
     purrr::map(split_cssX_byAutolayout) -> split_css
 
+  split_css |>
+    rename_split_css() -> split_css
+
   pc_map = map_parent_child(split_css)
 
   split_css |>
@@ -36,10 +39,16 @@ Fig <- function() {
     correct_insideAutoLayoutConstraint(pc_map) -> split_css
 
   fig$split_css <- split_css
+  fig$split_innerText <-
+    vector("list", length(fig$split_css)) |>
+    setNames(names(
+      fig$split_css
+    ))
+
   fig$DOM <- pc_map
-  fig$div <- split_css2div(fig$split_css)
+  fig$div <- split_css2div(fig$split_css, fig$split_innerText)
   fig$update_div <- function(){
-    fig$div <- split_css2div(fig$split_css)
+    fig$div <- split_css2div(fig$split_css, fig$split_innerText)
   }
 
   get_divInputFunction <- function(dep, split_div){
@@ -59,12 +68,29 @@ Fig <- function() {
     }
   }
 
+  fig$csstext <- get_csstext(
+    fig$split_css
+  )
+  fig$update_css <- function(){
+    get_csstext(
+      fig$split_css
+    ) -> fig$csstext
+  }
   fig$ui <- {
     fig$DOM |> purrr::map(
       ~get_divInputFunction(.x, fig$div)
     ) -> fig$div_input
+
     function(){
-      do.call(fig$div[[1]], fig$div_input[[1]]())
+      tag_style =
+        tags$style(
+          fig$csstext
+        )
+      do.call(fig$div[[1]], fig$div_input[[1]]()) -> tag_ui
+      tagList(
+        tag_ui,
+        tag_style
+      )
     }
   }
 
