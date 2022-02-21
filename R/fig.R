@@ -39,16 +39,16 @@ Fig <- function() {
     correct_insideAutoLayoutConstraint(pc_map) -> split_css
 
   fig$split_css <- split_css
-  fig$split_innerText <-
+  fig$split_innerContent <-
     vector("list", length(fig$split_css)) |>
     setNames(names(
       fig$split_css
     ))
 
   fig$DOM <- pc_map
-  fig$div <- split_css2div(fig$split_css, fig$split_innerText)
+  fig$div <- split_css2div(fig$split_css, fig$split_innerContent)
   fig$update_div <- function(){
-    fig$div <- split_css2div(fig$split_css, fig$split_innerText)
+    fig$div <- split_css2div(fig$split_css, fig$split_innerContent)
   }
 
   get_divInputFunction <- function(dep, split_div){

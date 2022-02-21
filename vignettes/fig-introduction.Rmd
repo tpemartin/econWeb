@@ -9,6 +9,7 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  eval=F,
   collapse = TRUE,
   comment = "#>"
 )
@@ -18,37 +19,60 @@ knitr::opts_chunk$set(
 library(econWeb)
 ```
 
-## Step 1
+## Step 1: copy figma CSS
 
 Select the UI frame to export then right click to choose **Copy/Paste as** > **Copy as CSS**
 
-## Step 2
+## Step 2: initiate fig
 
 In R
 ```{r}
 fig <- Fig()
 ```
 
-## Step 3
+## Step 3: adjust inner content/css (optional)
 
-Adjust frame inner text/html
-
+Adjust frame inner content, if any:
 ```{r}
-fig$split_innerText$`card-content-word-title`="Trick"
-fig$split_innerText$`card-content-word-pronun`="US /trɪk/       US /trɪk/"
-fig$split_innerText$`card-content-word-explain`="adj. 虛弱的；欺詐的
+fig$split_innerContent$`card-content-word-title`="Trick"
+fig$split_innerContent$`card-content-word-pronun`="US /trɪk/       US /trɪk/"
+fig$split_innerContent$`card-content-word-explain`="adj. 虛弱的；欺詐的
 n. 戲法；竅門；訣竅；把戲；特技"
-fig$split_innerText$`card-content-teacher-word`="前往VoiceTube 聽 Leila 老師如何應用單字"
-fig$split_innerText$`card-content-btn-level`="A2 初級"
+fig$split_innerContent$`card-content-teacher-word`="前往VoiceTube 聽 Leila 老師如何應用單字"
+fig$split_innerContent$`card-content-btn-level`="A2 初級"
 fig$update_div()
 ```
 
+Adjust css, if any:
 ```{r}
 fig$split_css$`card-content-teacher-word`$remain$width <- "min-content"
 fig$update_css()
 ```
 
+## Step 4: export to 
+
+Final check:
 ```{r}
 fig$ui() |> browseTag2()
+```
+
+Export with a tagname:
+```{r}
+fig |> export_fig(tagname="mytag")
+```
+
+  * The R code is stored in your clipboard for paste now, which looks like:
+```{r}
+tag_ui <-function(){
+  ...
+}
+tag_dependency <- function(){
+htmltools::htmlDependency(
+  ...
+)}
+ui <- function(){
+    tagList(tag_ui(), tag_dependency())
+  }
+ui() |> browseTag2()
 ```
 

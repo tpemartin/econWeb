@@ -137,7 +137,7 @@ html2R <- function(htmlStr, prefix = FALSE, withStyle=FALSE, styleTagCss=NULL) {
   library(stringr)
 
   htmlStr %>%
-    htmlParse -> x
+    htmlParse(encoding="UTF-8") -> x
 
   styleTag = NULL
   if(withStyle){
