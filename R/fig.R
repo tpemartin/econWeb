@@ -87,7 +87,7 @@ Fig <- function() {
       ~get_divInputFunction(.x, fig$div)
     ) -> fig$div_input
 
-    function(){
+    function(dependency=NULL){
       require(htmltools)
       tag_style =
         tags$style(
@@ -96,7 +96,8 @@ Fig <- function() {
       do.call(fig$div[[1]], fig$div_input[[1]]()) -> tag_ui
       tagList(
         tag_ui,
-        tag_style
+        tag_style,
+        dependency
       )
     }
   }
@@ -106,9 +107,18 @@ Fig <- function() {
     fig$DOM |> purrr::map(
       ~get_divInputFunction(.x, fig$div)
     ) -> fig$div_input
-    fig$ui <- function(){
+    fig$ui <- function(dependency=NULL){
       require(htmltools)
-      do.call(fig$div[[1]], fig$div_input[[1]]())
+      tag_style =
+        tags$style(
+          fig$csstext
+        )
+      do.call(fig$div[[1]], fig$div_input[[1]]()) -> tag_ui
+      tagList(
+        tag_ui,
+        tag_style,
+        dependency
+      )
     }
   }
 
