@@ -1,10 +1,21 @@
 export_fig <- function(fig, tagname="mycard") {
   fig$ui() -> fig_ui
+  # tagname="assets/css/card.css"
+  tagbasename =
+    stringr::str_remove(
+      basename(tagname), ".css$")
 
-  cssfilename = paste0(tagname,".css")
+  cssfilename = paste0(tagbasename,".css")
+  tagdirname = dirname(tagname)
+  if(!dir.exists(tagdirname))
+    dir.create(tagdirname, recursive = T)
+  cssfilepath=file.path(
+    tagdirname, cssfilename
+  )
   fig$csstext |>
-    xfun::write_utf8(file.path(".", cssfilename))
+    xfun::write_utf8(file.path(".", cssfilepath))
 
+  tagname=tagbasename
   tag_ui <- fig_ui[[1]]
   fig_ui[[1]] |>
     as.character() -> htmlStr
@@ -16,7 +27,7 @@ export_fig <- function(fig, tagname="mycard") {
     htmltools::htmlDependency(
       name=\"<<tagname>>\",
       version=\"1.0.0\",
-      src=c(file=normalizePath(\".\")),
+      src=c(file=normalizePath(\"./<<tagdirname>>\")),
       style=\"<<cssfilename>>\",
       all_files = F
     )}", .open="<<", .close=">>") -> dep_text

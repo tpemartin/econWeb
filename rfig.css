@@ -1,87 +1,89 @@
+
+
 .homes {
 	/* .homes */
-	
+
 	/* Auto layout */
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
 	padding: 5px 10px;
-	
+
 	position: relative;
 	width: 297.16px;
 	height: 67.01px;
-	
+
 	background: #6FCF97;
-	
-	
+
+
 }
 .home {
 	/* .home */
-	
+
 	position: static;
 	width: 44.27px;
 	height: 57.01px;
 	left: 10px;
 	top: 5px;
-	
+
 	background: #000000;
-	
+
 	/* Inside auto layout */
 	flex: none;
 	order: 0;
 	align-self: stretch;
 	flex-grow: 0;
-	
-	
+
+
 }
 .home {
 	/* .home */
-	
+
 	position: static;
 	width: 44.27px;
 	height: 57.01px;
 	left: 87.63px;
 	top: 5px;
-	
+
 	background: #000000;
-	
+
 	/* Inside auto layout */
 	flex: none;
 	order: 1;
 	flex-grow: 0;
-	
-	
+
+
 }
 .home {
 	/* .home */
-	
+
 	position: static;
 	width: 44.27px;
 	height: 57.01px;
 	left: 165.26px;
 	top: 5px;
-	
+
 	background: #000000;
-	
+
 	/* Inside auto layout */
 	flex: none;
 	order: 2;
 	flex-grow: 0;
-	
-	
+
+
 }
 .home {
 	/* .home */
-	
+
 	position: static;
 	width: 44.27px;
 	height: 57.01px;
 	left: 242.9px;
 	top: 5px;
-	
+
 	background: #000000;
-	
+
 	/* Inside auto layout */
 	flex: none;
 	order: 3;
