@@ -33,7 +33,12 @@ get_div_split = function(split_cssx, innerTextx=NULL){
   }
 }
 get_cssx <- function(split_cssx){
+  # split_cssx=split_css[1]
   cssname = names(split_cssx)
+  assertthat::assert_that(
+    is.list(split_cssx[[1]]),
+    msg=glue::glue("split_css${cssname} is not a list.")
+  )
   css_string=
     do.call(htmltools::css,
       purrr::flatten(split_cssx[[1]]))

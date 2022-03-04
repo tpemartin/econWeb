@@ -1,5 +1,7 @@
 update_package <- function(){
+  unloadNamespace("econWeb")
   remotes::install_github("tpemartin/econWeb", force=T)
+  library(econWeb)
 }
 check_classname <- function(){
   stringr::str_subset(clipr::read_clip(), "/\\* .* \\*/")
