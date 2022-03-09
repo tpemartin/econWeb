@@ -16,6 +16,7 @@ Imports:
     htmltools,
     magrittr,
     purrr,
+    servr,
     shiny,
     stringr,
     xfun,

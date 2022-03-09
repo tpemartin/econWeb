@@ -97,7 +97,7 @@ browseTag2 <- function(tag=.Last.value){
   if(!dir.exists("temp")) dir.create("temp")
   servr::daemon_stop()
   htmltools::save_html(
-    tagList(tag, dep_mobile()), file="temp/temp.html"
+    tagList(tag, dep_mobile()), file=file.path("temp","temp.html")
   )
   ss <- servr::httd("temp")
   # ss$port
