@@ -4,7 +4,10 @@
 \alias{Fig}
 \title{Initiator for fig}
 \usage{
-Fig()
+Fig(attachmentSrc = NULL)
+}
+\arguments{
+\item{attachmentSrc}{A path to attachment files folder.}
 }
 \value{
 
