@@ -1,6 +1,6 @@
 export_fig <- function(fig, tagname="mycard") {
   fig$ui() -> fig_ui
-  # tagname="assets/css/card.css"
+  # tagname="assets/css/card"
   tagbasename =
     stringr::str_remove(
       basename(tagname), ".css$")

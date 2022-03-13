@@ -1,10 +1,11 @@
 #' Initiator for fig
 #'
+#' @param attachmentSrc A path to attachment files folder.
 #' @return
 #' @export
 #'
 #' @examples none
-Fig <- function() {
+Fig <- function(attachmentSrc=NULL) {
   fig <- structure(new.env(), class="fig")
   fig$css <- list(
     original=clipr::read_clip()
@@ -82,7 +83,12 @@ Fig <- function() {
       fig$split_css
     ) -> fig$csstext
   }
+  fig |> get_setOfFamilies() ->
+    setOfFamilies
+
   fig$ui <- {
+
+
     fig$DOM |> purrr::map(
       ~get_divInputFunction(.x, fig$div)
     ) -> fig$div_input
@@ -93,9 +99,12 @@ Fig <- function() {
         tags$style(
           fig$csstext
         )
-      do.call(fig$div[[1]], fig$div_input[[1]]()) -> tag_ui
+      get_listTagUI(
+        setOfFamilies, fig
+      ) -> list_tagUI
+      # do.call(fig$div[[1]], fig$div_input[[1]]()) -> tag_ui
       tagList(
-        tag_ui,
+        list_tagUI,
         tag_style,
         dependency
       )
@@ -113,17 +122,68 @@ Fig <- function() {
         tags$style(
           fig$csstext
         )
-      do.call(fig$div[[1]], fig$div_input[[1]]()) -> tag_ui
+      get_listTagUI(
+        setOfFamilies, fig
+      ) -> list_tagUI
+      # do.call(fig$div[[1]], fig$div_input[[1]]()) -> tag_ui
       tagList(
-        tag_ui,
+        list_tagUI,
         tag_style,
         dependency
       )
     }
   }
-
+  export_fig <- generate_export_fig(attachmentSrc)
   fig$export <- function(tagname="fig"){
     fig |> export_fig(tagname=tagname)
   }
   return(fig)
+}
+
+
+get_setOfFamilies <- function(fig) {
+  look4family <- function(familySet){
+    # familySet=whichHasChild[[1]]
+    fig$DOM[familySet] |> unlist() -> partOfFamily
+    numNewMembers = setdiff(partOfFamily, familySet)
+    if(length(numNewMembers)==0){
+      return(familySet)
+    } else {
+      familySet=c(familySet, partOfFamily) |> unique()
+      look4family(familySet)
+    }
+  }
+  fig$DOM |>
+    purrr::map_lgl(
+      ~length(.x)!=0
+    ) |> which() -> whichHasChild
+  setOfFamilies = list()
+  flag_stillLeft = T
+  it=0; max.it=100;
+  while(flag_stillLeft && it <= max.it){
+    familySet =
+      look4family(whichHasChild[[1]])
+    whichHasChild = setdiff(
+      whichHasChild, familySet)
+    setOfFamilies=
+      append(setOfFamilies, list(familySet))
+    flag_stillLeft <- length(whichHasChild) !=0
+    it=it+1
+  }
+  return(setOfFamilies)
+}
+get_listTagUI <- function( setOfFamilies, fig) {
+  purrr::map(
+    seq_along(setOfFamilies),
+    ~{
+      familyX <- setOfFamilies[[.x]]
+      familyX
+      do.call(
+        fig$div[[familyX[[1]]]],
+        fig$div_input[[familyX[[1]]]]()
+      ) -> tagUI
+      tagUI
+    }
+  ) -> list_tagUI
+  list_tagUI |> as.tags()
 }
