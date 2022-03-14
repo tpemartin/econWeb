@@ -23,9 +23,9 @@ generate_export_fig <- function(attachmentSrc){
       as.character() -> htmlStr
     htmlStr |>
       generate_tagUiText() -> tag_uiText
-    tag_uiText |> clipr::write_clip()
-    # tag_uiText |> clipr::write_clip()
-    glue::glue("tag_dependency <- function(){
+    stringr::str_replace(tag_uiText,
+      "(?<=tag_)ui", tagname) -> tag_uiText
+    glue::glue("<<tagname>>_dependency <- function(){
       htmltools::htmlDependency(
         name=\"<<tagname>>\",
         version=\"1.0.0\",
@@ -38,10 +38,10 @@ generate_export_fig <- function(attachmentSrc){
 
 
     if(is.null(attachmentSrc)){
-"ui <- function(){
-  tagList(tag_ui(), tag_dependency())
-}" -> uiText
-      c(tag_uiText, tag_dependencyTxt, uiText, "ui() |> econWeb::browseTag2()") |>
+      glue::glue("ui_<<tagname>> <- function(dependency=NULL){
+    tagList(tag_<<tagname>>(), <<tagname>>_dependency(), dependency)
+  }", .open="<<", .close=">>") -> uiText
+      c(tag_uiText, tag_dependencyTxt, uiText, glue::glue("ui_{tagname}() |> econWeb::browseTag2()")) |>
         paste(collapse = "\n") -> txt4clipboard
     } else {
       "ui <- function(){
