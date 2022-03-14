@@ -16,7 +16,7 @@ generate_export_fig <- function(attachmentSrc){
     )
 
     fig$csstext |>
-      xfun::write_utf8(file.path(".", cssfilename))
+      xfun::write_utf8(file.path(".", cssfilepath))
     tagname=tagbasename
     tag_ui <- fig_ui[[1]]
     fig_ui[[1]] |>
