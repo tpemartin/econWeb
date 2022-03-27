@@ -141,6 +141,9 @@ Fig <- function(attachmentSrc=NULL) {
 }
 
 
+# helpers -----------------------------------------------------------------
+
+
 get_setOfFamilies <- function(fig) {
   look4family <- function(familySet){
     # familySet=whichHasChild[[1]]

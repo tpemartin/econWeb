@@ -1,7 +1,7 @@
 generate_export_fig <- function(attachmentSrc){
   attachment_dependencyTxt <-
     generate_attachmentDependency(attachmentSrc)
-  function(fig, tagname="mycard") {
+  function(fig, tagname="mycard", dependencyUseProjectname=TRUE) {
     fig$ui() -> fig_ui
     tagbasename =
       stringr::str_remove(
@@ -25,11 +25,30 @@ generate_export_fig <- function(attachmentSrc){
       generate_tagUiText() -> tag_uiText
     stringr::str_replace(tag_uiText,
       "(?<=tag_)ui", tagname) -> tag_uiText
+
+    if(is_rproject()
+      && in_instFolder(tagdirname)
+      && dependencyUseProjectname){
+      projname = basename(rstudioapi::getActiveProject())
+      sysfilepath = stringr::str_extract(tagdirname, "(?<=inst).*")
+      srcfile_expr = rlang::expr(
+        system.file(
+          !!sysfilepath, package=!!projname
+        )
+      )
+      depname = projname
+    } else {
+      srcfile_expr = rlang::expr(
+        normalizePath(!!tagdirname)
+      )
+      depname = tagname
+    }
+    srcfile = paste(rlang::expr_deparse(srcfile_expr), collapse = "")
     glue::glue("<<tagname>>_dependency <- function(){
       htmltools::htmlDependency(
-        name=\"<<tagname>>\",
+        name=\"<<depname>>\",
         version=\"1.0.0\",
-        src=c(file=normalizePath(\"./<<tagdirname>>\")),
+        src=c(file=<<srcfile>>),
         style=\"<<cssfilename>>\",
         all_files = F
       )}", .open="<<", .close=">>") -> tag_dependencyTxt
@@ -67,4 +86,11 @@ generate_attachmentDependency <- function(attachmentSrc){
     NULL-> attachmentDependencyTxt
   }
   return(attachmentDependencyTxt)
+}
+in_instFolder <- function(tagdirname) {
+  filepath_pattern1 = file.path("\\.","inst")
+  filepath_pattern2 = "inst"
+  pattern = paste0("^(",filepath_pattern1,"|",filepath_pattern2, ")")
+  tagdirname |>
+    stringr::str_detect(pattern)
 }

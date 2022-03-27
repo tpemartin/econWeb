@@ -23,6 +23,7 @@ export_fig <- function(fig, tagname="mycard") {
     generate_tagUiText() -> tag_uiText
   stringr::str_replace(tag_uiText,
     "(?<=tag_)ui", tagname) -> tag_uiText
+  # is_rproject()
   glue::glue("<<tagname>>_dependency <- function(){
     htmltools::htmlDependency(
       name=\"<<tagname>>\",

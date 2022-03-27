@@ -3,6 +3,11 @@ update_package <- function(){
   remotes::install_github("tpemartin/econWeb", force=T)
   # library(econWeb)
 }
+is_rproject <- function(){
+  list.files(".") |>
+    stringr::str_detect("[.]Rproj$") |>
+    any()
+}
 check_classname <- function(){
   stringr::str_subset(clipr::read_clip(), "/\\* .* \\*/")
 }

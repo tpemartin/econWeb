@@ -1,0 +1,7 @@
+.people{display:flex;flex-direction:row;align-items:flex-start;padding:19px 20px;flex:none;order:3;flex-grow:0;margin:17px 0px;position:static;width:220px;height:78px;left:0px;top:291px;border:1px dashed #7B61FF;box-sizing:border-box;border-radius:5px;}
+.people-status=off{flex:none;order:0;flex-grow:0;margin:0px 10px;position:static;width:40px;height:40px;left:20px;top:19px;background:#FFFFFF;border:1px solid #000000;box-sizing:border-box;box-shadow:0px 4px 4px rgba(0, 0, 0, 0.25);border-radius:40px;}
+.people-status=off-address{position:absolute;width:22.29px;height:24px;left:calc(50% - 22.29px/2 + 0.15px);top:calc(50% - 24px/2);background:#000000;}
+.people-status=on{flex:none;order:1;flex-grow:0;margin:0px 10px;position:static;width:40px;height:40px;left:90px;top:19px;border:2px solid #6FCF97;box-sizing:border-box;border-radius:40px;}
+.people-status=on-address{position:absolute;width:22.29px;height:24px;left:calc(50% - 22.29px/2 + 0.14px);top:calc(50% - 24px/2);background:#6FCF97;}
+.people-status=return{display:flex;flex-direction:row;justify-content:center;align-items:center;padding:0px;flex:none;order:2;flex-grow:0;margin:0px 10px;position:static;width:40px;height:40px;left:160px;top:19px;background:#FFFFFF;border:1px solid #000000;box-sizing:border-box;box-shadow:0px 4px 4px rgba(0, 0, 0, 0.25);border-radius:40px;}
+.people-status=return-Left{flex:none;order:0;flex-grow:0;position:static;width:23px;height:23px;left:calc(50% - 23px/2);top:calc(50% - 23px/2);background:url(.png);}
