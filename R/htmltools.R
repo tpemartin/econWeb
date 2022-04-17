@@ -85,6 +85,20 @@ browseTag <- function(tag=.Last.value){
   browseURL("temp/.temp.html")
 }
 
+#' save html with mobile dependency
+#'
+#' @param tag
+#' @param file
+#'
+#' @return
+#' @export
+#'
+#' @examples none.
+save_html2 <-  function(tag=.Last.value, file){
+  htmltools::save_html(
+    htmltools::tagList(tag, dep_mobile()), file=file)
+}
+
 #' As browseURL but it browse a shiny.tag or html class object in RStudio Viewer
 #'
 #' @param tag A shiny.tag or html class object
@@ -99,7 +113,7 @@ browseTag2 <- function(tag=.Last.value){
   htmltools::save_html(
     htmltools::tagList(tag, dep_mobile()), file=file.path("temp","temp.html")
   )
-  ss <- servr::httd("temp")
+  ss <- servr::httd("temp", host="0.0.0.0") # 0.0.0.0 is required for mobile browsing the desktop content
   # ss$port
   rstudioapi::viewer(glue::glue("http://127.0.0.1:{ss$port}/temp.html"))
 }
