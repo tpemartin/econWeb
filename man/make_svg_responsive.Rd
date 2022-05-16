@@ -10,11 +10,8 @@ make_svg_responsive(svgfile)
 \item{svgfile}{a filepath}
 }
 \value{
-
+none.
 }
 \description{
 Make svg responsive
-}
-\examples{
-none
 }

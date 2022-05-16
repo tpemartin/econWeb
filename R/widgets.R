@@ -6,7 +6,6 @@
 #' @return none
 #' @export
 #'
-#' @examples none
 createWidget = function(widgetname, modulename=NULL){
 
   projectname = rstudioapi::getActiveProject() |> basename()

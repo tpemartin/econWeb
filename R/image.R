@@ -2,10 +2,8 @@
 #'
 #' @param svgfile a filepath
 #'
-#' @return
+#' @return none.
 #' @export
-#'
-#' @examples none
 make_svg_responsive <- function(svgfile){
   readLines(svgfile, n=1) -> svgline1
   if(stringr::str_detect(svgline1, "(width|height)")){

@@ -10,11 +10,8 @@ Fig(attachmentSrc = NULL)
 \item{attachmentSrc}{A path to attachment files folder.}
 }
 \value{
-
+an environment
 }
 \description{
 Initiator for fig
-}
-\examples{
-none
 }

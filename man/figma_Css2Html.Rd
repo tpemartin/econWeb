@@ -10,11 +10,8 @@ figma_Css2Html(update_autolayout_margin = T)
 \item{update_autolayout_margin}{default =F}
 }
 \value{
-
+none
 }
 \description{
 Translate clipboard figma css to html
-}
-\examples{
-none
 }

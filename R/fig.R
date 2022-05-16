@@ -1,10 +1,9 @@
 #' Initiator for fig
 #'
 #' @param attachmentSrc A path to attachment files folder.
-#' @return
+#' @return an environment
 #' @export
 #'
-#' @examples none
 Fig <- function(attachmentSrc=NULL) {
   fig <- structure(new.env(), class="fig")
   fig$css <- list(

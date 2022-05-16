@@ -10,11 +10,8 @@ generate_assets_attachment_href(dependency)
 \item{dependency}{a htmlDepency where src=c(file...)}
 }
 \value{
-
+a list
 }
 \description{
 Generate assets attachment href when dependency attachment is vector of folder names
-}
-\examples{
-none.
 }

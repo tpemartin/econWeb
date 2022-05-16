@@ -5,14 +5,6 @@
 #' @return a list of tag functions
 #' @export
 #'
-#' @examples
-#' icons <- tags_icon("assets/icon")
-#' tagList(
-#'   icons$`btn-contact-off`(),
-#'   icons$`btn-contact-on`(),
-#'   icons$`btn-home-off`(),
-#'   icons$`btn-home-on`()) -> tagIcons
-#' tagIcons |> econWeb::browseTag()
 tags_icon <- function(iconFolder){
   iconFolder <- normalizePath(iconFolder)
   icon_dependency = icon_dependency_generator(iconFolder)

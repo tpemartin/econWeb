@@ -7,11 +7,8 @@
 Query()
 }
 \value{
-
+a list
 }
 \description{
 Generate Query instance for Q&A
-}
-\examples{
-none.
 }

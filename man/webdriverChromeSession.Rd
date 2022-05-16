@@ -12,6 +12,3 @@ an environment with $start_session() to start a webdriver session connected to c
 \description{
 chromedriver webdrive session starter
 }
-\examples{
-none.
-}

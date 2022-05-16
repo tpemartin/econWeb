@@ -1,9 +1,7 @@
 #' Generate figma instance
 #'
-#' @return
+#' @return an environment
 #' @export
-#'
-#' @examples none.
 Figma <-  function(){
   figma <- new.env()
   figma$convert2html <- function(){
@@ -42,10 +40,9 @@ Figma <-  function(){
 #'
 #' @param update_autolayout_margin default =F
 #'
-#' @return
+#' @return none
 #' @export
 #'
-#' @examples none
 figma_Css2Html <- function(update_autolayout_margin=T){
   figma2html(update_autolayout_margin) |> clipr::write_clip()
 }

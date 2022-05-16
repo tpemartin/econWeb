@@ -1,9 +1,7 @@
 #' Generate Query instance for Q&A
 #'
-#' @return
+#' @return a list
 #' @export
-#'
-#' @examples none.
 Query <- function(){
   q <- list()
   q$css_selectors <- generate_browseURL("https://www.w3schools.com/css/css_selectors.asp")

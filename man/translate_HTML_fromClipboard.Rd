@@ -10,11 +10,8 @@ translate_HTML_fromClipboard(prefix = T, withStyle = F, styleTagCss = NULL)
 \item{prefix}{a logical, default=T, the paste tag will start with tags$}
 }
 \value{
-
+to clipboard
 }
 \description{
 Take copy from clipboard and translate html codes to R codes and write to clipboard for paste
-}
-\examples{
-none.
 }

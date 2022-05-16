@@ -7,14 +7,13 @@
 save_html2(tag = .Last.value, file)
 }
 \arguments{
-\item{file}{}
+\item{tag}{a shiny tag}
+
+\item{file}{a filepath}
 }
 \value{
-
+none.
 }
 \description{
 save html with mobile dependency
-}
-\examples{
-none.
 }

@@ -17,6 +17,3 @@ none
 \description{
 Scaffold widget from web ui module files
 }
-\examples{
-none
-}

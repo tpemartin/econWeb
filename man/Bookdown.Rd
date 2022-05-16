@@ -7,11 +7,8 @@
 Bookdown()
 }
 \value{
-
+an environment
 }
 \description{
 Initiate Bookdown yml builder
-}
-\examples{
-none
 }

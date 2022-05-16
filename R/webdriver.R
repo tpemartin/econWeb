@@ -3,7 +3,6 @@
 #' @return an environment with $start_session() to start a webdriver session connected to chromedriver; with $kill_chrome() to kill chromedriver process.
 #' @export
 #'
-#' @examples none.
 webdriverChromeSession <- function() {
   sessionNew = new.env()
   sessionNew$p <- processx::process$new("chromedriver", stdout="|")

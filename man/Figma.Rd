@@ -7,11 +7,8 @@
 Figma()
 }
 \value{
-
+an environment
 }
 \description{
 Generate figma instance
-}
-\examples{
-none.
 }

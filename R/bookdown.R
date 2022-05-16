@@ -1,9 +1,8 @@
 #' Initiate Bookdown yml builder
 #'
-#' @return
+#' @return an environment
 #' @export
 #'
-#' @examples none
 Bookdown <- function(){
   bookdown <- new.env()
   rstudioapi::getActiveProject() |> basename() -> projectName

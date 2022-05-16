@@ -1,9 +1,7 @@
 #' Create a web instance
 #'
-#' @return
+#' @return an environment
 #' @export
-#'
-#' @examples none.
 Web <- function(){
   require(htmltools)
   webExists = exists("web", envir=.GlobalEnv)

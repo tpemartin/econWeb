@@ -7,11 +7,8 @@
 Web()
 }
 \value{
-
+an environment
 }
 \description{
 Create a web instance
-}
-\examples{
-none.
 }

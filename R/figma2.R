@@ -4,7 +4,6 @@
 #' @return an environment with `create_cssFile`, `div` and `style` objects.
 #' @export
 #'
-#' @examples none
 create_rfig <- function(update_autolayout_margin=F){
   fig <- new.env()
   figma2R(update_autolayout_margin) -> list_tag_funs

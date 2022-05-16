@@ -2,7 +2,7 @@
 #'
 #' @param objectname A symbol or a character
 #'
-#' @return
+#' @return an environment
 #' @export
 #'
 #' @examples Object(world)

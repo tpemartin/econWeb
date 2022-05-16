@@ -15,6 +15,3 @@ an environment with `create_cssFile`, `div` and `style` objects.
 \description{
 Convert figma CSS in clipboard to an R environment object
 }
-\examples{
-none
-}

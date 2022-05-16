@@ -15,12 +15,3 @@ a list of tag functions
 \description{
 Generate tag functions for icon svg's saved under a certain folder
 }
-\examples{
-icons <- tags_icon("assets/icon")
-tagList(
-  icons$`btn-contact-off`(),
-  icons$`btn-contact-on`(),
-  icons$`btn-home-off`(),
-  icons$`btn-home-on`()) -> tagIcons
-tagIcons |> econWeb::browseTag()
-}

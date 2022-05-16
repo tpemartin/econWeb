@@ -10,11 +10,8 @@ browseTag(tag = .Last.value)
 \item{tag}{A shiny.tag or html class object}
 }
 \value{
-
+none.
 }
 \description{
 As browseURL but it browse a shiny.tag or html class object
-}
-\examples{
-none
 }

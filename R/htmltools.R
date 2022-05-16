@@ -2,10 +2,8 @@
 #'
 #' @param dependency a htmlDepency where src=c(file...)
 #'
-#' @return
+#' @return a list
 #' @export
-#'
-#' @examples none.
 generate_assets_attachment_href <- function(dependency) {
   assets <- list()
   assets_dep = dependency
@@ -37,46 +35,14 @@ generate_assets_attachment_href <- function(dependency) {
   }
   assets
 }
-#' Create dependency other than script and link in the head
-#'
-#' @param name as in htmlDependency
-#' @param version as in htmlDependency
-#' @param ... other inputs other than src, script and style
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#' dep_ios <- htmlDependency2(
-#'   name="ios-app",
-#'   version="0.0.1",
-#'   meta = list(
-#'     `apple-mobile-web-app-capable`="yes",
-#'     `apple-mobile-web-app-status-bar-style`="black"
-#'   )
-#' )
-htmlDependency2 <- function(name, version,...){
-  require(htmltools)
-  if(!dir.exists("assets/js")) dir.create("assets/js", recursive = T)
-  "" |> xfun::write_utf8("assets/js/empty.js")
-  message("An empty file \"assets/js/empty.js\" is created. Do not delete it.")
-  htmlDependency(
-    name=name,
-    version=version,
-    src=c(file="assets/js"),
-    script="empty.js",
-    ...
-  )
-}
 
 #' As browseURL but it browse a shiny.tag or html class object
 #'
 #' @param tag A shiny.tag or html class object
 #'
-#' @return
+#' @return none.
 #' @export
 #'
-#' @examples none
 browseTag <- function(tag=.Last.value){
   if(!dir.exists("temp")) dir.create("temp")
   htmltools::save_html(
@@ -87,13 +53,11 @@ browseTag <- function(tag=.Last.value){
 
 #' save html with mobile dependency
 #'
-#' @param tag
-#' @param file
+#' @param tag a shiny tag
+#' @param file a filepath
 #'
-#' @return
+#' @return none.
 #' @export
-#'
-#' @examples none.
 save_html2 <-  function(tag=.Last.value, file){
   htmltools::save_html(
     htmltools::tagList(tag, dep_mobile()), file=file)
@@ -103,10 +67,9 @@ save_html2 <-  function(tag=.Last.value, file){
 #'
 #' @param tag A shiny.tag or html class object
 #'
-#' @return
+#' @return none.
 #' @export
 #'
-#' @examples none
 browseTag2 <- function(tag=.Last.value){
   if(!dir.exists("temp")) dir.create("temp")
   servr::daemon_stop()
@@ -121,10 +84,9 @@ browseTag2 <- function(tag=.Last.value){
 #'
 #' @param prefix a logical, default=T, the paste tag will start with tags$
 #'
-#' @return
+#' @return to clipboard
 #' @export
 #'
-#' @examples none.
 translate_HTML_fromClipboard <- function(prefix = T, withStyle=F, styleTagCss=NULL) {
   # prefix=T
   clipr::read_clip() -> html
