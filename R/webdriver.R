@@ -5,7 +5,15 @@
 #'
 webdriverChromeSession <- function() {
   sessionNew = new.env()
-  sessionNew$p <- processx::process$new("chromedriver", stdout="|")
+  # sessionNew$p <- processx::process$new("chromedriver", stdout="|")
+  tryCatch({
+    sessionNew$p <- processx::process$new("chromedriver", stdout = "|")
+  },
+    error=function(e){
+      warning("Cannot locate chromedriver.")
+      message("Make sure chromedriver is installed in one of Sys.getenv(\"PATH\") paths.")
+    })
+
   sessionNew$kill_chrome = sessionNew$p$kill
   # sessionNew$p$read_output() -> stdout
 
