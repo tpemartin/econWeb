@@ -58,6 +58,7 @@ generate_export_fig <- function(attachmentSrc){
 
     if(is.null(attachmentSrc)){
       glue::glue("ui_<<tagname>> <- function(dependency=NULL){
+      library(htmltools)
     tagList(tag_<<tagname>>(), <<tagname>>_dependency(), dependency)
   }", .open="<<", .close=">>") -> uiText
       c(tag_uiText, tag_dependencyTxt, uiText, glue::glue("ui_{tagname}() |> econWeb::browseTag2()")) |>
